@@ -19,7 +19,10 @@ const customerSchema = new Schema(
 			default: false,
 		},
 
-		order,
+		orderedItems: {
+			type: [Object],
+			default: [],
+		},
 	},
 	{
 		timestamps: true,

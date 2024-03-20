@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose')
+const bcryptjs = require('bcryptjs')
 
 const DOCUMENT_NAME = 'Employee'
 const COLLECTION_NAME = 'Employees'
@@ -15,6 +16,12 @@ const employeeSchema = new Schema(
 			enum: ['male', 'female'],
 		},
 
+		password: {
+			type: String,
+			required: true,
+			unselect: true,
+		},
+
 		phone: {
 			type: String,
 		},
@@ -22,16 +29,31 @@ const employeeSchema = new Schema(
 		email: {
 			type: String,
 			required: true,
+			index: true,
 		},
-		role: String,
 
-		address: String,
+		role: {
+			type: String,
+			default: 'employee',
+		},
 
-		salary: String,
+		address: {
+			country: String,
+			city: String,
+			street: String,
+		},
 
-		startDate: String,
+		salary: Number,
 
-		EndDate: String,
+		startDate: {
+			type: Date,
+			default: Date.now(),
+		},
+
+		EndDate: {
+			type: Date,
+			default: null,
+		},
 	},
 	{
 		timestamps: true,
@@ -39,4 +61,17 @@ const employeeSchema = new Schema(
 	},
 )
 
+const SALT = bcryptjs.genSaltSync(10)
+
+employeeSchema.pre('save', async function (next) {
+	if (!this.isModified('password')) {
+		next()
+	}
+	this.password = await bcryptjs.hash(this.password, SALT)
+	next()
+})
+
+employeeSchema.methods.comparePassword = async function (enteredPassword) {
+	return await bcryptjs.compare(enteredPassword, this.password)
+}
 module.exports = model(DOCUMENT_NAME, employeeSchema)

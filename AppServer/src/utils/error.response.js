@@ -1,16 +1,11 @@
 'use strict'
 const statusCodes = require('./statusCodes')
 const reasonError = require('./reasonPhrases')
-const logger = require('../log/winston.log')
 
 class ErrorReponse extends Error {
 	constructor(message, status) {
 		super(message)
 		this.status = status
-
-		// log the error use winston
-
-		logger.error(`${this.status} - ${this.message}`)
 	}
 }
 
