@@ -1,6 +1,5 @@
 const { isAuthenticated } = require('../middleware/auth')
 const catchAsyncHandler = require('../middleware/catchAsyncHandler')
-const employeeService = require('../services/employee.service')
 
 module.exports = (app) => {
 	app.use(
@@ -14,14 +13,16 @@ module.exports = (app) => {
 			switch (event) {
 				case 'AUTHORIZATION':
 					const response = req.employee
-					return res.status(200).json(response)
-				case 'TEST':
-					console.log('Working...subscriber')
+					return res.status(200).json({
+						employee: selectFields(response, ['_id', 'name', 'email']),
+					})
 				default:
 					break
 			}
 
-			return res.status(200).json()
+			return res.status(500).json({
+				msg: 'Internal Server Error',
+			})
 		}),
 	)
 }

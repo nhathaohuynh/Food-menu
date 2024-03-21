@@ -4,6 +4,7 @@ const notFound = require('./middleware/not-found')
 const errorHandler = require('./middleware/handle-error')
 const category = require('./controllers/category')
 const menu = require('./controllers/menu')
+const menuEvent = require('./controllers/menuEvent')
 
 module.exports = async (app) => {
 	app.use(express.json({ limit: '1mb' }))
@@ -12,7 +13,7 @@ module.exports = async (app) => {
 	app.use(express.static(__dirname + '/public'))
 
 	// appEvent(app)
-
+	menuEvent(app)
 	//api
 	category(app)
 	// api food

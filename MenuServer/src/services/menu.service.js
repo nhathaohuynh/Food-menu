@@ -26,10 +26,12 @@ class MenuService {
 		}
 	}
 
-	async getMenuItem(id) {
-		const menu = await findMenuItemById(id)
+	async getMenuItem({ menuItemId }) {
+		const menu = await findMenuItemById(menuItemId)
 		if (!menu) throw new BadRequest('Menu not found')
-		return menu
+		return {
+			menu,
+		}
 	}
 
 	async updateMenuItem(id, updateData) {

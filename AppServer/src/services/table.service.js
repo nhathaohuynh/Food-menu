@@ -33,6 +33,14 @@ class TableService {
 	}
 
 	async updateTable(tableId, table) {
+		const tableExist = await findTableById(tableId)
+
+		if (!tableExist) throw new BadRequest('Table not found')
+
+		if (tableExist.isClosed === true) {
+			throw new BadRequest('Table is closed')
+		}
+
 		const updatedTable = await findTableByIdAndUpdaye(tableId, table)
 		if (!updatedTable) throw new BadRequest('Table not found')
 

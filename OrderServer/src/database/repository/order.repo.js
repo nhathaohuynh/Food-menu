@@ -25,4 +25,8 @@ module.exports = {
 	async findOrderItemIdAndUpdate(orderItemId, payload) {
 		return await orderItemModel.findByIdAndUpdate(orderItemId, payload).lean()
 	},
+
+	async findOrderByIdAndPopulate(orderId) {
+		return await orderModel.findById(orderId).populate('orderItem').lean()
+	},
 }

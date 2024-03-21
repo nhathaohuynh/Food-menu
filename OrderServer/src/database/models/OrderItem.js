@@ -15,6 +15,11 @@ const orderItemSchema = new Schema(
 			ref: 'MenuItem',
 		},
 
+		itemName: {
+			type: String,
+			required: true,
+		},
+
 		price: {
 			type: Number,
 			required: true,
@@ -37,8 +42,8 @@ const orderItemSchema = new Schema(
 
 		status: {
 			type: String,
-			enum: ['pedding', 'ready', 'done'],
-			default: 'pedding',
+			enum: ['pendding', 'ready', 'done'],
+			default: 'pendding',
 		},
 	},
 	{

@@ -40,8 +40,20 @@ const validateParams = () => async (req, res, next) => {
 	}
 }
 
+const validateParamsCustomization = (schema) => async (req, res, next) => {
+	try {
+		await schema.parseAsync({
+			params: req.params,
+		})
+		return next()
+	} catch (err) {
+		return next(new BadRequest('Invalid request params'))
+	}
+}
+
 module.exports = {
 	validateParams,
 	validateBodyAndParams,
 	validateBody,
+	validateParamsCustomization,
 }
