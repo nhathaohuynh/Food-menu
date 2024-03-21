@@ -8,11 +8,17 @@ const menuItemSchema = new Schema(
 		name: {
 			type: String,
 			required: true,
+			index: true,
+			unique: true,
 		},
 
 		price: {
 			type: Number,
 			required: true,
+		},
+
+		description: {
+			type: String,
 		},
 
 		unit: {
@@ -24,13 +30,26 @@ const menuItemSchema = new Schema(
 			required: true,
 		},
 
-		categoryId: {
-			type: Schema.ObjectId,
-			ref: 'GroupMenu',
+		categoryId: [
+			{
+				type: Schema.ObjectId,
+				ref: 'CategoryMenu',
+			},
+		],
+
+		ingredients: {
+			type: [String],
+			required: true,
 		},
-		status: {
-			type: String,
-			enum: [''],
+
+		available: {
+			type: Boolean,
+			default: true,
+		},
+
+		isStopSelling: {
+			type: Boolean,
+			default: false,
 		},
 	},
 	{
@@ -38,5 +57,11 @@ const menuItemSchema = new Schema(
 		collection: COLLECTION_NAME,
 	},
 )
+
+menuItemSchema.pre(/^find/, function (next) {
+	// this points to the query
+	this.find({ isStopSelling: false })
+	next()
+})
 
 module.exports = model(DOCUMENT_NAME, menuItemSchema)

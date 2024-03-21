@@ -30,9 +30,29 @@ const orderSchema = new Schema(
 			},
 		],
 
+		chefId: {
+			type: Schema.ObjectId,
+			ref: 'Employee',
+			default: null,
+		},
+
+		startTime: {
+			type: Date,
+		},
+
+		finshTime: {
+			type: Date,
+		},
+
+		isPaid: {
+			type: Boolean,
+			default: false,
+		},
+
 		status: {
 			type: String,
-			enum: [''],
+			enum: ['pending', 'done'],
+			default: 'pending',
 		},
 	},
 	{

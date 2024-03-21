@@ -2,7 +2,8 @@ const express = require('express')
 const cors = require('cors')
 const notFound = require('./middleware/not-found')
 const errorHandler = require('./middleware/handle-error')
-const food = require('./controllers/food')
+const category = require('./controllers/category')
+const menu = require('./controllers/menu')
 
 module.exports = async (app) => {
 	app.use(express.json({ limit: '1mb' }))
@@ -13,7 +14,9 @@ module.exports = async (app) => {
 	// appEvent(app)
 
 	//api
-	food(app)
+	category(app)
+	// api food
+	menu(app)
 	// not found
 	app.use(notFound)
 

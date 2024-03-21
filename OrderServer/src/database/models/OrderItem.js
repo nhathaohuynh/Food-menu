@@ -10,32 +10,35 @@ const orderItemSchema = new Schema(
 			ref: 'Order',
 		},
 
-		menuItem: {
+		menuItemId: {
 			type: Schema.ObjectId,
-			ref: 'MenuIem',
+			ref: 'MenuItem',
+		},
+
+		price: {
+			type: Number,
+			required: true,
+		},
+
+		quantity: {
+			type: Number,
+			required: true,
+			min: [1, 'Quantity can not be less then 1.'],
+		},
+
+		subTotal: {
+			type: Number,
+			required: true,
 		},
 
 		note: {
 			type: String,
 		},
 
-		chefId: {
-			type: Schema.ObjectId,
-			ref: 'Employee',
-		},
-
-		startTime: {
-			type: Date,
-			default: Date.now(),
-		},
-
-		finshTime: {
-			type: Date,
-		},
-
 		status: {
 			type: String,
-			enum: [],
+			enum: ['pedding', 'ready', 'done'],
+			default: 'pedding',
 		},
 	},
 	{

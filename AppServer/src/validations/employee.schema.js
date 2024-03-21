@@ -9,6 +9,10 @@ const registerSchema = z.object({
 			.min(6, 'Password must be at least 6 characters long')
 			.max(20, 'Password must be at least 20 characters long'),
 		role: z.string().default('employee'),
+		phone: z
+			.string()
+			.length(10, 'Phone number must be exactly 10 characters long')
+			.optional(),
 		address: z
 			.object({
 				country: z.string(),

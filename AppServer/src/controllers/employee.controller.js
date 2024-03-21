@@ -16,13 +16,19 @@ class EmployeeController {
 
 	async logoutEmployee(req, res, next) {
 		return new CreatedReponse({
-			metaData: await employeeService.logoutEmployee(req.body),
+			metaData: await employeeService.logoutEmployee(req.employee),
 		}).send(res)
 	}
 
 	async refreshToken(req, res, next) {
+		const employeeId = req.headers['x-client-id']
+		const refreshToken = req.body.refreshToken
 		return new CreatedReponse({
-			metaData: await employeeService.regreshTokenEmployee(req.body),
+			metaData: await employeeService.refreshTokenEmployee(
+				employeeId,
+				refreshToken,
+				next,
+			),
 		}).send(res)
 	}
 }

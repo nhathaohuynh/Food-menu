@@ -12,7 +12,7 @@ const { isAuthenticated } = require('../middleware/auth')
 const route = express.Router()
 
 route.post(
-	'/insert',
+	'/',
 	validateBody(registerSchema),
 	catchAsyncHandler(employeeController.insertEmployee),
 )
@@ -29,9 +29,8 @@ route.delete(
 	catchAsyncHandler(employeeController.logoutEmployee),
 )
 
-route.get(
+route.post(
 	'/refresh-token',
-	isAuthenticated,
 	validateBody(refreshTokenSchema),
 	catchAsyncHandler(employeeController.refreshToken),
 )

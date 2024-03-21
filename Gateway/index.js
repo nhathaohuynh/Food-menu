@@ -6,26 +6,22 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-const handleProxyErrors = (proxyRes, res, req) => {
-	if (proxyRes.statusCode !== 200) {
-		res.status(502).json({ error: 'Gateway error' })
-	}
-	return proxyRes
+const handleProxyErrors = (err, res, req, next) => {
+	console.log(err)
+	res.status(502).json({ error: 'Gateway error' })
 }
 
 app.use(
 	'/menu',
-	proxy('http://localhost:8003', { userResDecorator: handleProxyErrors }),
+	proxy('http://localhost:8003', { proxyErrorHandler: handleProxyErrors }),
 )
-
 app.use(
 	'/order',
-	proxy('http://localhost:8004', { userResDecorator: handleProxyErrors }),
+	proxy('http://localhost:8004', { proxyErrorHandler: handleProxyErrors }),
 )
-
 app.use(
 	'/',
-	proxy('http://localhost:8002', { userResDecorator: handleProxyErrors }),
+	proxy('http://localhost:8002', { proxyErrorHandler: handleProxyErrors }),
 )
 
 app.listen(8000, () => {

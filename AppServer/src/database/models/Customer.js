@@ -19,7 +19,7 @@ const customerSchema = new Schema(
 			default: false,
 		},
 
-		orderedItems: {
+		orders: {
 			type: [Object],
 			default: [],
 		},

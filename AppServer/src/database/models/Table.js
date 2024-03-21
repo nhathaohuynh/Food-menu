@@ -8,16 +8,23 @@ const tableSchema = new Schema(
 		number: {
 			type: Number,
 			required: true,
+			unqiue: true,
 		},
 
 		capacity: {
-			type: String,
+			type: Number,
 			required: true,
 		},
 
 		status: {
 			type: String,
-			enum: ['available', ''],
+			enum: ['available', 'unavailable'],
+			default: 'available',
+		},
+
+		isClosed: {
+			type: Boolean,
+			default: false,
 		},
 	},
 	{
@@ -26,4 +33,4 @@ const tableSchema = new Schema(
 	},
 )
 
-module.exports = model(DOCUMENT_NAME, tableName)
+module.exports = model(DOCUMENT_NAME, tableSchema)

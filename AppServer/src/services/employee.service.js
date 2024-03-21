@@ -1,6 +1,7 @@
 const {
 	insertEmployee,
 	findEmployeeByEmail,
+	findEmployeeById,
 } = require('../database/repository/employee.repo')
 
 const crypto = require('crypto')
@@ -9,8 +10,10 @@ const { unselectFields } = require('../utils/optionsField')
 const {
 	findByEmployeeIdAndUpdateKey,
 	findKeyByEmployeeAndDelete,
+	findKeyByEmployeeId,
 } = require('../database/repository/key.repo')
 const { BadRequest } = require('../utils/error.response')
+const jwt = require('jsonwebtoken')
 
 class EmployeeService {
 	async insertEmployee(body) {
@@ -65,7 +68,7 @@ class EmployeeService {
 		}
 	}
 
-	async logoutEmployee(employeeId, refreshToken) {
+	async logoutEmployee(employeeId) {
 		const employeeKey = await findKeyByEmployeeAndDelete(employeeId)
 
 		if (!employeeKey)
@@ -76,35 +79,52 @@ class EmployeeService {
 		}
 	}
 
-	async refreshTokenEmployee(body) {
-		const { employeeId, refreshToken } = body
-		const userKey = await findByEmployeeIdAndUpdateKey(employeeId, {
-			$pull: { refreshTokenUsage: refreshToken },
-		})
-		if (!userKey)
+	async refreshTokenEmployee(employeeId, refreshToken, next) {
+		const employeeKey = await findKeyByEmployeeId(employeeId)
+
+		if (!employeeKey)
 			throw new BadRequest('Failed to refresh token, please try again!')
 
-		const publicKey = crypto.randomBytes(64).toString('hex')
-		const privateKey = crypto.randomBytes(64).toString('hex')
-		const payloadToken = {
-			userId: employeeId,
-		}
-		const tokens = generatePairToken(payloadToken, publicKey, privateKey)
+		if (employeeKey?.refreshTokenUsage.includes(refreshToken))
+			throw new BadRequest('Invalid refresh token!') // handling reuse refresh token
 
-		const payload = {
-			publicKey,
-			privateKey,
-			refreshToken: tokens.refreshToken,
-		}
+		if (employeeKey?.refreshToken !== refreshToken)
+			throw new BadRequest('Invalid refresh token!')
 
-		const newUserKey = await findByEmployeeIdAndUpdateKey(employeeId, payload)
-		if (!newUserKey)
-			throw new BadRequest('Failed to create user key, please try again!')
+		try {
+			const decode = jwt.verify(refreshToken, employeeKey?.privateKey)
+			if (!decode) throw new BadRequest('Invalid refresh token!')
 
-		return {
-			accessToken: tokens.accessToken,
+			const publicKey = crypto.randomBytes(64).toString('hex')
+			const privateKey = crypto.randomBytes(64).toString('hex')
+
+			const payloadToken = {
+				employeeId: employeeId,
+			}
+			const tokens = generatePairToken(payloadToken, publicKey, privateKey)
+
+			const payload = {
+				publicKey,
+				privateKey,
+				refreshToken: tokens.refreshToken,
+				refreshTokenUsage: [...employeeKey?.refreshTokenUsage, refreshToken],
+			}
+
+			const reponseKey = await findByEmployeeIdAndUpdateKey(employeeId, payload)
+			if (!reponseKey)
+				throw new BadRequest('Failed to create user key, please try again!')
+
+			return {
+				accessToken: tokens.accessToken,
+				refreshToken: tokens.refreshToken,
+			}
+		} catch (err) {
+			console.log('err', err)
+			throw next(new BadRequest('Failed to refresh token, please try again!'))
 		}
 	}
+
+	async subscribeEvents(payload) {}
 }
 
 module.exports = new EmployeeService()

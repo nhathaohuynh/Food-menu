@@ -11,7 +11,7 @@ module.exports = {
 	},
 
 	async findKeyByEmployeeAndDelete(employeeId) {
-		return await userKey.findOneAndDelete({ employee: employeeId }).lean()
+		return await keyModel.findOneAndDelete({ employee: employeeId }).lean()
 	},
 
 	async findKeyByEmployeeId(employeeId) {

@@ -50,6 +50,11 @@ const employeeSchema = new Schema(
 			default: Date.now(),
 		},
 
+		orders: {
+			type: [Object],
+			default: [],
+		},
+
 		EndDate: {
 			type: Date,
 			default: null,

@@ -1,6 +1,5 @@
 'use strict'
 
-const { codeStatus } = require('../configs/env-config')
 const reasonStatusCodes = require('./reasonPhrases')
 const statusCodes = require('./statusCodes')
 
@@ -12,7 +11,7 @@ class SuccessResponse {
 	}) {
 		this.message = message
 		this.status = status
-		this.code = codeStatus.success
+		this.code = 1
 		this.metaData = metaData
 	}
 
