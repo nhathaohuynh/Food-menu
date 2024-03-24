@@ -61,14 +61,11 @@ module.exports = async (app) => {
 					return res.status(200).json(resAddMenuItem)
 
 				case 'DELETE_MENUITEM':
-					console.log('aaa')
 					try {
 						await deleteMenuItemOrderSchema.parseAsync(data)
 					} catch (error) {
 						return next(new BadRequest('Invalid request body'))
 					}
-
-					console.log(data)
 
 					const resDeleteMenuItem = await orderService.removeItemFromOrder(data)
 

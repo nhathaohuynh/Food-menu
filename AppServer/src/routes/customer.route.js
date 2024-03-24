@@ -9,6 +9,7 @@ const {
 	insertOrderItemForCustomerSchema,
 	paramsOrderItemSchema,
 	updateOrderItemForCustomerSchema,
+	paymentOrderForCustomerSchema,
 } = require('../validations/customer.schema')
 
 const route = express.Router()
@@ -53,6 +54,15 @@ route.delete(
 	authorizedRoles('management', 'employee'),
 	validateParamsCustomization(paramsOrderItemSchema),
 	catchAsyncHandler(customerController.deleteOrderItemForCustomer),
+)
+
+route.post(
+	isAuthenticated,
+	authorizedRoles('management', 'employee'),
+	'/payment/:customerId/:orderId',
+	validateParamsCustomization(paramsOrderSchema),
+	validateBody(paymentOrderForCustomerSchema),
+	catchAsyncHandler(customerController.paymentOrderForCustomer),
 )
 
 module.exports = route

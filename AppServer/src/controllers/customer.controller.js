@@ -180,6 +180,30 @@ class CustomerController {
 			metaData: resOrderItem.data,
 		}).send(res)
 	}
+
+	async paymentOrderForCustomer(req, res, next) {
+		const { customerId, orderId } = req.params
+
+		const accessToken = req.headers['authorization']
+		const employeeId = req.employee._id
+
+		const event = 'PAYMENT_ORDER'
+		const payload = {
+			orderId,
+		}
+
+		const [resCustomer, resOrder] = await Promise.all([
+			customerService.getCustomer(customerId),
+			PublishOrderEvent(event, accessToken, employeeId, payload),
+		])
+
+		if (!resCustomer || resOrder.status !== 200)
+			throw new BadRequest('Invalid request') // if customer or order not found
+
+		return new OkResponse({
+			metaData: resOrder.data,
+		}).send(res)
+	}
 }
 
 module.exports = new CustomerController()

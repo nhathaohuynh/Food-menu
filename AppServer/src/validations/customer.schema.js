@@ -1,4 +1,7 @@
 const { z } = require('zod')
+const {
+	paymentOrderForCustomer,
+} = require('../controllers/customer.controller')
 
 const insertOrderForCustomerSchema = z.object({
 	body: z.object({
@@ -38,10 +41,20 @@ const updateOrderItemForCustomerSchema = z.object({
 	}),
 })
 
+const paymentOrderForCustomerSchema = z.object({
+	body: z.object({
+		totalAmount: z.number().min(0),
+		paymentMethod: z.enum(['cash', 'credit_card']),
+		receiveAmount: z.number().min(0),
+		changeAmount: z.number().min(0),
+	}),
+})
+
 module.exports = {
 	insertOrderForCustomerSchema,
 	paramsOrderSchema,
 	insertOrderItemForCustomerSchema,
 	paramsOrderItemSchema,
 	updateOrderItemForCustomerSchema,
+	paymentOrderForCustomerSchema,
 }

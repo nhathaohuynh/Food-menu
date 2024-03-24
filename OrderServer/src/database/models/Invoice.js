@@ -11,6 +11,8 @@ const invoiceSchema = new Schema(
 			required: true,
 		},
 
+		shiftId: { type: Schema.Types.ObjectId, ref: 'Shift' },
+
 		totalAmount: {
 			type: Number,
 			required: true,
@@ -30,12 +32,6 @@ const invoiceSchema = new Schema(
 		changeAmount: {
 			type: Number,
 			default: 0,
-		},
-
-		paymentStatus: {
-			type: String,
-			enum: ['unpaid', 'paid'],
-			default: 'unpaid',
 		},
 	},
 	{

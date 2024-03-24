@@ -45,19 +45,14 @@ const employeeSchema = new Schema(
 
 		salary: Number,
 
-		startDate: {
-			type: Date,
-			default: Date.now(),
-		},
-
 		orders: {
-			type: [Object],
+			type: [
+				{
+					type: Schema.Types.ObjectId,
+					ref: 'Order',
+				},
+			],
 			default: [],
-		},
-
-		EndDate: {
-			type: Date,
-			default: null,
 		},
 	},
 	{
