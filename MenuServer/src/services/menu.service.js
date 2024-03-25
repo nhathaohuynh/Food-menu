@@ -4,7 +4,9 @@ const {
 	findMenuItemsByQueries,
 	findAndCountMenuItemsByQueries,
 	findMenuByIdAndUpdate,
+	findMenuItemAndToggleStatus,
 } = require('../database/repository/menu.repo')
+const { BadRequest } = require('../utils/error.response')
 const { updateCategory } = require('./cate.service')
 
 class MenuService {
@@ -86,6 +88,20 @@ class MenuService {
 				counts: countMenuItems,
 				menuItems,
 			},
+		}
+	}
+
+	async toggleStatusMenuItem({ menuItemId }) {
+		const menuItem = await findMenuItemById(menuItemId)
+
+		if (!menuItem) throw new BadRequest('Menu Item not found')
+
+		await findMenuItemAndToggleStatus(menuItemId, {
+			available: !menuItem.available,
+		})
+
+		return {
+			menuItemId,
 		}
 	}
 }

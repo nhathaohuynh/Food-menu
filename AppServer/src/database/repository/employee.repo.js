@@ -10,6 +10,6 @@ module.exports = {
 	},
 
 	async findEmployeeById(employeeId) {
-		return await employeeModel.findById(employeeId).lean()
+		return await employeeModel.findById(employeeId)
 	},
 }

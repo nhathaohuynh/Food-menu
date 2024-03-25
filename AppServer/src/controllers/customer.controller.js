@@ -190,6 +190,9 @@ class CustomerController {
 		const event = 'PAYMENT_ORDER'
 		const payload = {
 			orderId,
+			customerId,
+			employeeId,
+			...req.body,
 		}
 
 		const [resCustomer, resOrder] = await Promise.all([

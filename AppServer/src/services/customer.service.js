@@ -33,6 +33,20 @@ class CustomerService {
 			customer: unselectFields(customer, ['__v', 'createdAt', 'updatedAt']),
 		}
 	}
+
+	async updateInvoice(customerId, invoiceId) {
+		const customer = await findCustomerById(customerId)
+
+		if (!customer) throw new BadRequest('Customer not found')
+
+		customer.invoice.push(invoiceId)
+
+		await customer.save()
+
+		return {
+			customerId,
+		}
+	}
 }
 
 module.exports = new CustomerService()

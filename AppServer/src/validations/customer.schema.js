@@ -29,9 +29,9 @@ const insertOrderItemForCustomerSchema = z.object({
 
 const paramsOrderItemSchema = z.object({
 	params: z.object({
-		orderId: z.string(),
-		customerId: z.string(),
-		orderItemId: z.string(),
+		orderId: z.string().optional(),
+		customerId: z.string().optional(),
+		orderItemId: z.string().optional(),
 	}),
 })
 const updateOrderItemForCustomerSchema = z.object({

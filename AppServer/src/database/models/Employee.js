@@ -37,6 +37,20 @@ const employeeSchema = new Schema(
 			default: 'employee',
 		},
 
+		timeStartWork: [
+			{
+				type: Date,
+				default: null,
+			},
+		],
+
+		timeEndWork: [
+			{
+				type: Date,
+				default: null,
+			},
+		],
+
 		address: {
 			country: String,
 			city: String,
@@ -45,11 +59,11 @@ const employeeSchema = new Schema(
 
 		salary: Number,
 
-		orders: {
+		invoice: {
 			type: [
 				{
 					type: Schema.Types.ObjectId,
-					ref: 'Order',
+					ref: 'Invoice',
 				},
 			],
 			default: [],

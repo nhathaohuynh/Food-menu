@@ -11,7 +11,16 @@ const invoiceSchema = new Schema(
 			required: true,
 		},
 
-		shiftId: { type: Schema.Types.ObjectId, ref: 'Shift' },
+		customerId: {
+			type: Schema.Types.ObjectId,
+			ref: 'Customer',
+			required: true,
+		},
+		employeeId: {
+			type: Schema.Types.ObjectId,
+			ref: 'Employee',
+			required: true,
+		},
 
 		totalAmount: {
 			type: Number,

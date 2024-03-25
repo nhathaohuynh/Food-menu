@@ -6,6 +6,7 @@ module.exports = {
 	},
 
 	async findMenuItemById(menuItemId) {
+		console.log(menuItemId)
 		return await menuItemModel.findById(menuItemId)
 	},
 
@@ -15,10 +16,11 @@ module.exports = {
 		})
 	},
 
-	findMenuItemsByQueries: async ({ formattedQueryName, skip, limit }) => {
+	async findMenuItemsByQueries({ formattedQueryName, skip, limit }) {
 		return await menuItemModel
 			.find({
 				$or: [formattedQueryName],
+				available: true,
 			})
 			.sort('-createdAt')
 			.select('-updatedAt -createdAt')
@@ -27,11 +29,15 @@ module.exports = {
 			.lean()
 	},
 
-	findAndCountMenuItemsByQueries: async (formattedQueryName) => {
+	async findAndCountMenuItemsByQueries(formattedQueryName) {
 		return await menuItemModel
 			.find({
 				$or: [formattedQueryName],
 			})
 			.countDocuments({ isStopSelling: false })
+	},
+
+	async findMenuItemAndToggleStatus(menuItemId, payload) {
+		return await menuItemModel.findByIdAndUpdate(menuItemId, payload).lean()
 	},
 }

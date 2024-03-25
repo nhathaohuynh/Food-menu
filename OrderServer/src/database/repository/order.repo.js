@@ -1,5 +1,6 @@
 const orderModel = require('../models/Order')
 const orderItemModel = require('../models/OrderItem')
+const invoiceModel = require('../models/Invoice')
 
 module.exports = {
 	async createNewOrder(order) {
@@ -7,7 +8,7 @@ module.exports = {
 	},
 
 	async findOrderById(orderId) {
-		return await orderModel.findById(orderId)
+		return await orderModel.findById(orderId).populate('orderItem')
 	},
 
 	async createNewOrderItem(orderItem) {
@@ -26,7 +27,24 @@ module.exports = {
 		return await orderItemModel.findByIdAndUpdate(orderItemId, payload).lean()
 	},
 
-	async findOrderByIdAndPopulate(orderId) {
+	async findOrderByIdAndPopulate(orderId = null) {
+		if (!orderId) {
+			return orderModel.findOne().populate('orderItem').lean()
+		}
 		return await orderModel.findById(orderId).populate('orderItem').lean()
+	},
+
+	async createNewInvoice(payload) {
+		return await invoiceModel.create(payload)
+	},
+
+	async findInvoiceByTimeline(query) {
+		return invoiceModel
+			.find(query)
+			.sort({ createdAt: 'asc' })
+			.populate('customerId')
+			.populate('employeeId')
+			.populate('orderItem')
+			.lean()
 	},
 }

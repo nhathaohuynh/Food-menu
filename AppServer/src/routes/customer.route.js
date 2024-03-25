@@ -57,9 +57,9 @@ route.delete(
 )
 
 route.post(
-	isAuthenticated,
-	authorizedRoles('management', 'employee'),
 	'/payment/:customerId/:orderId',
+	isAuthenticated,
+	authorizedRoles('management', 'employee', 'chef'),
 	validateParamsCustomization(paramsOrderSchema),
 	validateBody(paymentOrderForCustomerSchema),
 	catchAsyncHandler(customerController.paymentOrderForCustomer),

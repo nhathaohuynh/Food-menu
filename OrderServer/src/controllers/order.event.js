@@ -7,6 +7,7 @@ const {
 	addMenuItemOrderSchema,
 	deleteMenuItemOrderSchema,
 	updateMenuItemOrderSchema,
+	paymentOrderForCustomerSchema,
 } = require('../validations/order.schema')
 
 module.exports = async (app) => {
@@ -76,8 +77,6 @@ module.exports = async (app) => {
 					return res.status(200).json(resDeleteMenuItem)
 
 				case 'UPDATE_MENUITEM':
-					console.log('aa')
-					console.log(data)
 					try {
 						await updateMenuItemOrderSchema.parseAsync(data)
 					} catch (error) {
@@ -93,6 +92,51 @@ module.exports = async (app) => {
 					}
 
 					return res.status(200).json(resUpdateMenuItem)
+
+				case 'GET_ORDERS_FOR_CHEF':
+					const resGetOrders = await orderService.getOrders()
+
+					if (!resGetOrders) {
+						return next(new BadRequest('Invalid request body'))
+					}
+					return res.status(200).json(resGetOrders)
+
+				case 'UPDATE_STATUS_ORDER_ITEM':
+					const resStatusMenuItem = await orderService.updateStatusOrderItem(
+						data,
+					)
+
+					if (!resStatusMenuItem) {
+						return next(new BadRequest('Invalid request body'))
+					}
+					return res.status(200).json(resStatusMenuItem)
+
+				case 'REVICE_ORDER':
+					const resReviceOrder = await orderService.reviceOrder(data)
+
+					if (!resReviceOrder) {
+						return next(new BadRequest('Invalid request body'))
+					}
+					return res.status(200).json(resReviceOrder)
+
+				case 'PAYMENT_ORDER':
+					try {
+						await paymentOrderForCustomerSchema.parseAsync(data)
+					} catch (error) {
+						return next(new BadRequest('Invalid request body'))
+					}
+
+					console.log('aaa')
+
+					const resPaymentOrder = await orderService.paymentOrderForCustomer(
+						data,
+					)
+
+					if (!resPaymentOrder) {
+						return next(new BadRequest('Invalid request body'))
+					}
+
+					return res.status(200).json(resPaymentOrder)
 				default:
 					break
 			}

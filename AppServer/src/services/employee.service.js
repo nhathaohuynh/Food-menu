@@ -53,7 +53,21 @@ class EmployeeService {
 			refreshTokenUsage: [],
 		}
 
-		const userKey = await findByEmployeeIdAndUpdateKey(employee._id, payload)
+		const currentTime = Date.now()
+
+		// Create a Date object with the current timestamp
+		const currentDate = new Date(currentTime)
+
+		// Adjust the time zone offset to Vietnamese time (UTC+07:00)
+		currentDate.setUTCHours(currentDate.getUTCHours() + 7)
+
+		employee.timeStartWork.push(currentDate)
+
+		const userKey = await Promise.all([
+			findByEmployeeIdAndUpdateKey(employee._id, payload),
+			employee.save(),
+		])
+
 		if (!userKey)
 			throw new BadRequest('Failed to create user key, please try again!')
 
@@ -69,10 +83,27 @@ class EmployeeService {
 	}
 
 	async logoutEmployee(employeeId) {
-		const employeeKey = await findKeyByEmployeeAndDelete(employeeId)
+		const [employeeKey, employee] = await Promise.all([
+			findKeyByEmployeeAndDelete(employeeId),
+			findEmployeeById(employeeId),
+		])
 
-		if (!employeeKey)
+		if (!employeeKey || !employee)
 			throw new BadRequest('Failed to logout, please try again!')
+
+		const currentTime = Date.now()
+
+		// Create a Date object with the current timestamp
+		const currentDate = new Date(currentTime)
+
+		// Adjust the time zone offset to Vietnamese time (UTC+07:00)
+		currentDate.setUTCHours(currentDate.getUTCHours() + 7)
+
+		employee.timeEndWork.push(currentDate)
+
+		await employee.save()
+
+		console.log(employeeId)
 
 		return {
 			employeeId,
@@ -124,7 +155,18 @@ class EmployeeService {
 		}
 	}
 
-	async subscribeEvents(payload) {}
+	async updateInvoiceEmployee(employeeId, invoiceId) {
+		const employee = await findEmployeeById(employeeId)
+		if (!employee) throw new BadRequest('Employee not found')
+
+		employee.invoice.push(invoiceId)
+
+		await employee.save()
+
+		return {
+			employeeId,
+		}
+	}
 }
 
 module.exports = new EmployeeService()

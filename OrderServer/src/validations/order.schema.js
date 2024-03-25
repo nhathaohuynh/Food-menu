@@ -32,10 +32,21 @@ const updateMenuItemOrderSchema = z.object({
 	orderId: z.string(),
 })
 
+const paymentOrderForCustomerSchema = z.object({
+	orderId: z.string(),
+	customerId: z.string(),
+	employeeId: z.string(),
+	totalAmount: z.number().min(0),
+	paymentMethod: z.enum(['cash', 'credit_card']),
+	receiveAmount: z.number().min(0),
+	changeAmount: z.number().min(0),
+})
+
 module.exports = {
 	insertOrderSchema,
 	getOrderSchema,
 	addMenuItemOrderSchema,
 	deleteMenuItemOrderSchema,
 	updateMenuItemOrderSchema,
+	paymentOrderForCustomerSchema,
 }

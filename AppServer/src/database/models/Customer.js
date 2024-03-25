@@ -19,8 +19,13 @@ const customerSchema = new Schema(
 			default: false,
 		},
 
-		orders: {
-			type: [Object],
+		invoice: {
+			type: [
+				{
+					type: Schema.Types.ObjectId,
+					ref: 'Invoice',
+				},
+			],
 			default: [],
 		},
 	},
