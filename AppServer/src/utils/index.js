@@ -10,12 +10,7 @@ module.exports.FormateData = (data) => {
 	}
 }
 
-module.exports.PublishOrderEvent = async (
-	event,
-	accessToken,
-	employeeId,
-	data = {},
-) => {
+module.exports.PublishOrderEvent = async (event, data = {}) => {
 	return await axios.post(
 		'http://localhost:8000/order/events',
 		{
@@ -27,8 +22,6 @@ module.exports.PublishOrderEvent = async (
 		{
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: accessToken,
-				'x-client-id': employeeId,
 			},
 		},
 	)

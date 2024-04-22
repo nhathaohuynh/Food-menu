@@ -6,9 +6,7 @@ const COLLECTION_NAME = 'Orders'
 const orderSchema = new Schema(
 	{
 		tableId: {
-			type: Schema.ObjectId,
-			ref: 'Table',
-			required: true,
+			type: String,
 		},
 
 		customerId: {
@@ -18,9 +16,7 @@ const orderSchema = new Schema(
 		},
 
 		employeeId: {
-			type: Schema.ObjectId,
-			ref: 'Employee',
-			required: true,
+			type: String,
 		},
 
 		orderItem: [
@@ -31,9 +27,7 @@ const orderSchema = new Schema(
 		],
 
 		chefId: {
-			type: Schema.ObjectId,
-			ref: 'Employee',
-			default: null,
+			type: String,
 		},
 
 		startTime: {

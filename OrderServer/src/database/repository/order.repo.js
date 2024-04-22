@@ -38,13 +38,24 @@ module.exports = {
 		return await invoiceModel.create(payload)
 	},
 
+	async insertOrderItem(payload) {
+		const orderItems = await orderItemModel.insertMany(payload)
+		return orderItems
+	},
+
 	async findInvoiceByTimeline(query) {
 		return invoiceModel
 			.find(query)
 			.sort({ createdAt: 'asc' })
-			.populate('customerId')
-			.populate('employeeId')
-			.populate('orderItem')
+			.populate('orderId')
 			.lean()
+	},
+
+	async getOrderItems() {
+		return await orderItemModel.find({ status: 'pending' }).lean()
+	},
+
+	async getOrderItem(orderItemId) {
+		return await orderItemModel.findById(orderItemId)
 	},
 }

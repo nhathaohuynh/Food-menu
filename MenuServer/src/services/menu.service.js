@@ -13,8 +13,6 @@ class MenuService {
 	async insertMenuItem(menuData) {
 		const menu = await createNewMenuItem(menuData)
 
-		console.log(menuData.categoryId)
-
 		const responsUdate = await updateCategory(menuData.categoryId, {
 			$push: {
 				menuItems: menu._id,
@@ -71,7 +69,7 @@ class MenuService {
 		}
 
 		const page = +queries?.page || 1
-		const limit = +queries?.limit || 10
+		const limit = +queries?.limit || 12
 		const skip = (page - 1) * limit
 
 		const menuItems = await findMenuItemsByQueries({
@@ -91,14 +89,16 @@ class MenuService {
 		}
 	}
 
-	async toggleStatusMenuItem({ menuItemId }) {
+	async toggleStatusMenuItem(menuItemId) {
 		const menuItem = await findMenuItemById(menuItemId)
 
 		if (!menuItem) throw new BadRequest('Menu Item not found')
 
-		await findMenuItemAndToggleStatus(menuItemId, {
-			available: !menuItem.available,
-		})
+		menuItem.available = !menuItem.available
+
+		await menuItem.save()
+
+		console.log('success')
 
 		return {
 			menuItemId,

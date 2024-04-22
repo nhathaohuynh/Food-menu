@@ -8,13 +8,25 @@ const {
 	findOrderByIdAndPopulate,
 	createNewInvoice,
 	findInvoiceByTimeline,
+	insertOrderItem,
+	getOrderItems,
+	getOrderItem,
 } = require('../database/repository/order.repo')
 const { unselectFields } = require('../utils/optionsField')
+const moment = require('moment')
 
 class OrderService {
-	async insertOrder(order) {
-		console.log('order', order)
-		const response = await createNewOrder(order)
+	async insertOrder({ customerId, tableId, employeeId, cart }) {
+		const response = await createNewOrder({ customerId, tableId, employeeId })
+
+		const orderItem = cart.map((item) => {
+			return {
+				...item,
+				orderId: response._id,
+			}
+		})
+
+		await insertOrderItem(orderItem)
 
 		if (!response) throw new BadRequest('Order not found')
 
@@ -181,13 +193,6 @@ class OrderService {
 		const order = await findOrderById(orderId)
 		if (!order) throw new BadRequest('Order not found')
 
-		const totalMoney = order.orderItem.reduce((total, item) => {
-			return total + item.subTotal
-		}, 0)
-
-		if (totalAmount !== totalMoney)
-			throw new BadRequest('Total amount is not correct')
-
 		order.isPaid = true
 
 		const payload = {
@@ -202,13 +207,20 @@ class OrderService {
 
 		if (!invoice) throw new BadRequest('Invoice not found')
 
+		const data = {
+			invoiceId: invoice._id,
+			orderId: order._id,
+		}
+
+		console.log(data)
+
 		return {
 			invoiceId: invoice._id,
 			orderId: order._id,
 		}
 	}
 
-	async analyticsInvoice({ timeline, startDate, endDate }) {
+	async analyticsInvoice({ timeline = 'today', startDate, endDate }) {
 		let query = {}
 
 		const toUtc = (localTime) => moment(localTime).utc()
@@ -233,8 +245,8 @@ class OrderService {
 			case 'last7days':
 				query = {
 					createdAt: {
-						$gte: toUtc(moment().local().subtract(6, 'days').startOf('day')),
-						$lt: toUtc(moment().local().endOf('day')),
+						$gte: toUtc(moment().local().subtract(7, 'days').startOf('day')),
+						$lt: toUtc(moment().local().subtract(1, 'days')).endOf('day'),
 					},
 				}
 				break
@@ -282,6 +294,30 @@ class OrderService {
 			totalAmount,
 			numberOfInvoice,
 			orders: invoices,
+		}
+	}
+
+	async getOrderItems() {
+		const orderItems = await getOrderItems()
+
+		if (!orderItems) throw new BadRequest('Order not found')
+
+		return {
+			orderItems,
+		}
+	}
+
+	async makeDoneOrderItem(orderItemId) {
+		const orderItem = await getOrderItem(orderItemId)
+
+		if (!orderItem) throw new BadRequest('Order not found')
+
+		orderItem.status = 'done'
+
+		await orderItem.save()
+
+		return {
+			orderItem,
 		}
 	}
 }

@@ -5,42 +5,30 @@ const { CreatedReponse, OkResponse } = require('../utils/success.response')
 
 class CustomerController {
 	async insertOrderForCustomer(req, res, next) {
-		const { tableId, phone } = req.body
+		const { employeeId, tableNumber: tableId, phone, cart } = req.body
 
-		const accessToken = req.headers['authorization']
-		const employeeId = req.employee._id
+		const resCustomer = await customerService.insertCustomer(phone)
 
-		const [resRable, resCustomer] = await Promise.all([
-			tableService.updateTable(tableId, {
-				status: 'unavailable',
-			}),
-			customerService.insertCustomer(phone),
-		])
+		console.log(req.body)
 
-		if (!resRable || !resCustomer)
-			return next(new BadRequest('Invalid request')) // if table or customer not found
+		if (!resCustomer) return next(new BadRequest('Invalid request'))
 
 		const event = 'CREATE_ORDER'
 		const payload = {
 			tableId,
 			customerId: resCustomer.customer._id,
 			employeeId,
+			cart,
 		}
 
 		// call Order server create new order
-		const response = await PublishOrderEvent(
-			event,
-			accessToken,
-			employeeId,
-			payload,
-		)
+		const response = await PublishOrderEvent(event, payload)
 
 		if (response.status !== 200) throw new BadRequest('Invalid request') // if order not found
 
 		return new CreatedReponse({
 			metaData: {
 				order: response.data.order,
-				customerId: resCustomer.customer._id,
 			},
 		}).send(res)
 	}
@@ -182,23 +170,19 @@ class CustomerController {
 	}
 
 	async paymentOrderForCustomer(req, res, next) {
-		const { customerId, orderId } = req.params
-
-		const accessToken = req.headers['authorization']
-		const employeeId = req.employee._id
-
 		const event = 'PAYMENT_ORDER'
 		const payload = {
-			orderId,
-			customerId,
-			employeeId,
 			...req.body,
 		}
 
+		console.log(payload)
+
 		const [resCustomer, resOrder] = await Promise.all([
-			customerService.getCustomer(customerId),
-			PublishOrderEvent(event, accessToken, employeeId, payload),
+			customerService.getCustomer(req.body?.customerId),
+			PublishOrderEvent(event, payload),
 		])
+
+		console.log('alo')
 
 		if (!resCustomer || resOrder.status !== 200)
 			throw new BadRequest('Invalid request') // if customer or order not found

@@ -6,7 +6,6 @@ module.exports = {
 	},
 
 	async findMenuItemById(menuItemId) {
-		console.log(menuItemId)
 		return await menuItemModel.findById(menuItemId)
 	},
 
@@ -20,7 +19,6 @@ module.exports = {
 		return await menuItemModel
 			.find({
 				$or: [formattedQueryName],
-				available: true,
 			})
 			.sort('-createdAt')
 			.select('-updatedAt -createdAt')

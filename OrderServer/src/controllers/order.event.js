@@ -2,7 +2,6 @@ const catchAsyncHandler = require('../middleware/catchAsyncHandler')
 const orderService = require('../services/order.service')
 const { BadRequest } = require('../utils/error.response')
 const {
-	insertOrderSchema,
 	getOrderSchema,
 	addMenuItemOrderSchema,
 	deleteMenuItemOrderSchema,
@@ -19,12 +18,6 @@ module.exports = async (app) => {
 
 			switch (event) {
 				case 'CREATE_ORDER':
-					try {
-						await insertOrderSchema.parseAsync(data)
-					} catch (error) {
-						return next(new BadRequest('Invalid request body'))
-					}
-
 					const resCreateOrder = await orderService.insertOrder(data)
 
 					if (!resCreateOrder) {
@@ -120,22 +113,10 @@ module.exports = async (app) => {
 					return res.status(200).json(resReviceOrder)
 
 				case 'PAYMENT_ORDER':
-					try {
-						await paymentOrderForCustomerSchema.parseAsync(data)
-					} catch (error) {
-						return next(new BadRequest('Invalid request body'))
-					}
-
-					console.log('aaa')
-
+					console.log(data)
 					const resPaymentOrder = await orderService.paymentOrderForCustomer(
 						data,
 					)
-
-					if (!resPaymentOrder) {
-						return next(new BadRequest('Invalid request body'))
-					}
-
 					return res.status(200).json(resPaymentOrder)
 				default:
 					break

@@ -17,9 +17,7 @@ const invoiceSchema = new Schema(
 			required: true,
 		},
 		employeeId: {
-			type: Schema.Types.ObjectId,
-			ref: 'Employee',
-			required: true,
+			type: String,
 		},
 
 		totalAmount: {
@@ -27,20 +25,13 @@ const invoiceSchema = new Schema(
 			required: true,
 		},
 
-		paymentMethod: {
-			type: String,
-			enum: ['cash', 'credit_card'],
-			required: true,
-		},
-
-		receiveAmount: {
+		subTotal: {
 			type: Number,
 			required: true,
 		},
-
-		changeAmount: {
+		tax: {
 			type: Number,
-			default: 0,
+			required: true,
 		},
 	},
 	{

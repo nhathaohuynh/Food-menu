@@ -16,10 +16,12 @@ const route = express.Router()
 
 route.post(
 	'/order',
-	isAuthenticated,
-	authorizedRoles('management', 'employee'),
-	validateBody(insertOrderForCustomerSchema),
 	catchAsyncHandler(customerController.insertOrderForCustomer),
+)
+
+route.post(
+	'/payment',
+	catchAsyncHandler(customerController.paymentOrderForCustomer),
 )
 
 route.get(
@@ -54,15 +56,6 @@ route.delete(
 	authorizedRoles('management', 'employee'),
 	validateParamsCustomization(paramsOrderItemSchema),
 	catchAsyncHandler(customerController.deleteOrderItemForCustomer),
-)
-
-route.post(
-	'/payment/:customerId/:orderId',
-	isAuthenticated,
-	authorizedRoles('management', 'employee', 'chef'),
-	validateParamsCustomization(paramsOrderSchema),
-	validateBody(paymentOrderForCustomerSchema),
-	catchAsyncHandler(customerController.paymentOrderForCustomer),
 )
 
 module.exports = route

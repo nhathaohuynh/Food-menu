@@ -1,5 +1,8 @@
 export const path = {
-	MAIN_LAYOUT: '/',
+	ROOT: '/',
 	LOGIN: 'login',
 	REGISTER: 'register',
+	TABLES: 'tables',
+	PROFILE: 'profile',
+	ORDER: 'order',
 }
